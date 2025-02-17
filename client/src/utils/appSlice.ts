@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UserInfoType } from "../pages/ProfilePage";
+import { UserInfoType } from "../pages/DashboardPage";
 
 export type messageType = {
     _id?: string;

@@ -1,18 +1,22 @@
 import './App.css'
 import { Route,  Routes } from 'react-router-dom'
+import DashboardPage from './pages/DashboardPage'
+import SignupPage from './pages/SignupPage'
+import SigninPage from './pages/SigninPage'
 import WelcomePage from './pages/WelcomePage'
-import ProfilePage from './pages/ProfilePage'
-import ChatPage from './pages/ChatPage'
+
 
 function App() {
   
 
   return (
     <Routes>
-      
       <Route path="/"  element={<WelcomePage/>}/>
-      <Route path="/profile" element={<ProfilePage/>}/>
-      <Route path="/chat" element={<ChatPage/>}/>
+      
+      <Route path="/sign-up"  element={<SignupPage/>}/>
+      <Route path="/sign-in"  element={<SigninPage/>}/>
+      <Route path="/profile" element={<DashboardPage/>}/>
+     
 
     
 
