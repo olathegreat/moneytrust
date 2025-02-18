@@ -1,10 +1,5 @@
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
+
 
 const ChatComponent = () => {
   return (
