@@ -20,6 +20,7 @@ const companySchema = new Schema<CompanyDocument>({
         type: String,
         required: [true, 'Please enter your company name'],
         trim: true,
+        
         minLength: [3, 'company name must be more than 3 characters'],
 
     },

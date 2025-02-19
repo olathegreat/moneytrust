@@ -3,65 +3,74 @@ import bcrypt from "bcryptjs";
 
 export interface UserDocument extends Document{
     _id: ObjectId,
-    fullname: string,
+    firstName: string,
+    lastName: string,
     email: string,
     password?: string,
-    picture?: string,
-    about?: string,
-    profileSetupCompleted: boolean,
-    googleSignIn: boolean,
-    userType?:'user' | 'moderator' | 'admin'
+    phoneNumber: string,
+    otp?: string,
+    otpExpires?: Date,
+    isVerified: boolean,
+    
 
 }
 const userSchema = new Schema<UserDocument>({
 
-    fullname: {
+    firstName: {
         type: String,
-        required: [true, 'Please enter your fullname'],
+        required: [true, 'Please enter your first name'],
         trim: true,
-        minLength: [3, 'Fullname must be more than 3 characters'],
+        
+        minLength: [3, 'first name must be more than 3 characters'],
 
     },
+    lastName: {
+        type: String,
+        required: [true, 'Please enter your last name'],
+        trim: true,
+        
+        minLength: [3, 'last name must be more than 3 characters'],
+
+    },
+   
     email:{
         type: String,
-        required: [true, 'Please enter your email'],
+        required: [true, 'Please enter your  email'],
         trim: true,
         unique: true,
         lowercase: true,
 
     },
-    about:{
+    phoneNumber:{
         type: String,
+        required: [true, 'Please enter your  phonenumber'],
         trim: true,
-        minLength : [2, "Your about should not be less than 6"]
-
+        unique: true,
+        
 
     },
+    
     password:{
         type: String,
-        // required: [true, 'Please enter your password'],
-        required: function(this: UserDocument){
-            return !this.googleSignIn;
-        },
+        required: [true, 'Please enter your password'],
         trim: true,
         minLength: [6, 'Password must be more than 6 characters'],
         select: false,
     },
-    picture:{
+   
+    otp:{
         type: String,
+    
     },
-    googleSignIn:{
+    otpExpires:{
+        type: Date,
+        
+    },
+    isVerified:{
         type: Boolean,
-        default: false,
-    },
-    profileSetupCompleted:{
-        type: Boolean,
-        default: false,
-    },
-    userType:{
-        type: String,
-        enum: ['user','moderator', 'admin'],
+        default: false
     }
+
 
 
 })

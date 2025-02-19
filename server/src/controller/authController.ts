@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import { ObjectId } from 'mongoose';
 import { Resend } from 'resend';
+import User from '../model/userModel';
+import bcrypt from "bcryptjs"
 dotenv.config();
 
 
@@ -24,6 +26,12 @@ export const registerCompany = async (req: Request, res: Response): Promise<void
         const existingCompany = await Company.findOne({ companyEmail });
         if (existingCompany) {
             res.status(400).json({ message: 'Company already registered with this email' });
+            return;
+        }
+
+        const existingUser = await User.findOne({ email: companyEmail });
+        if (existingUser) {
+            res.status(400).json({ message: 'email  already registered' });
             return;
         }
 
@@ -75,8 +83,72 @@ export const registerCompany = async (req: Request, res: Response): Promise<void
 
 
 
+export const registerUser = async (req: Request, res: Response): Promise<void> => {
+    const { firstName,lastName, email,phoneNumber, password } = req.body;
 
-export const verifyOtp = async (req: Request, res: Response):Promise<void> => {
+    try {
+        const existingCompany = await Company.findOne({companyEmail: email });
+        if (existingCompany) {
+            res.status(400).json({ message: 'email  already registered' });
+            return;
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            res.status(400).json({ message: 'user  already registered' });
+            return;
+        }
+
+        // Generate OTP and expiry time
+        const otp = crypto.randomInt(1000, 9999).toString();
+        const otpExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes expiry
+
+        const newUser = await User.create({
+            lastName,
+            firstName,
+            email,
+            phoneNumber,
+            password,
+            otp,
+            otpExpires,
+            isVerified: false
+        });
+
+       
+
+        const token = signToken(newUser._id);
+
+        res.status(201).json({
+            status: 'success',
+            token,
+            message: 'Company registered successfully. Verify your email with the OTP sent.',
+            data: {
+                company: {
+                    _id: newUser._id,
+                    firstName: newUser.firstName,
+                    lastName: newUser.lastName,
+                    email: newUser.email,
+                    isVerified: newUser.isVerified,
+                    otp
+                }
+            }
+        });
+         // Send OTP email via Resend
+         await resend.emails.send({
+            from: `Your Company <${process.env.FROM_EMAIL}>`,
+            to: email,
+            subject: 'Verify Your Email - OTP Code',
+            html: `<p>Your OTP code is: <strong>${otp}</strong></p><p>This code expires in 30 minutes.</p>`,
+        });
+    } catch (error) {
+        console.error('Registration Error:', error);
+        res.status(500).json({ message: 'Server error during company registration' });
+    }
+};
+
+
+
+export const verifyCompanyOtp = async (req: Request, res: Response):Promise<void> => {
   const { companyEmail, otp } = req.body;
 
   try {
@@ -115,5 +187,129 @@ export const verifyOtp = async (req: Request, res: Response):Promise<void> => {
     console.error('OTP Verification Error:', error);
     res.status(500).json({ message: 'Server error during OTP verification' });
   }
+};
+
+
+
+export const verifyUserOtp = async (req: Request, res: Response):Promise<void> => {
+    const { email, otp } = req.body;
+  
+    try {
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+         res.status(404).json({ message: 'user not found' });
+         return
+      }
+  
+      if (user.isVerified) {
+        res.status(400).json({ message: 'user is already verified' });
+        return
+      }
+  
+      if (user.otp !== otp) {
+         res.status(400).json({ message: 'Invalid OTP' });
+         return
+      }
+  
+      if (user.otpExpires && new Date(user.otpExpires) < new Date()) {
+      res.status(400).json({ message: 'OTP has expired. Request a new one.' });
+      return
+      }
+  
+      // Mark company as verified
+      user.isVerified = true;
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      await user.save();
+  
+      res.status(200).json({ status: 'success', message: 'Email verified successfully' });
+      return
+  
+    } catch (error) {
+      console.error('OTP Verification Error:', error);
+      res.status(500).json({ message: 'Server error during OTP verification' });
+    }
+  };
+  
+
+
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+    const { email, password } = req.body;
+
+    try {
+        // Check if the user exists in the Company collection
+        let user = await Company.findOne({ companyEmail: email }).select('+password');
+        let role: 'company' | 'user' | null = user ? 'company' : null;
+
+        // If not found, check the User collection
+        if (!user) {
+            user = await User.findOne({ email }).select('+password');
+            role = user ? 'user' : null;
+        }
+
+        // If no user or company found, return an error
+        if (!user || !role) {
+            res.status(404).json({ message: 'Invalid email or password' });
+            return;
+        }
+
+        // Verify the password (assuming passwords are hashed using bcrypt)
+        if(user.password){
+
+       
+        const isPasswordValid = await bcrypt.compare(password, user!.password);
+        if (!isPasswordValid) {
+            res.status(400).json({ message: 'Invalid email or password' });
+            return;
+        }
+
+    }
+
+       
+        // Generate JWT token
+        const token = signToken(user._id);
+
+        
+
+        
+
+        res.status(200).json({
+            status: 'success',
+            token,
+            message: 'Login successful',
+            data: {
+                user: {
+                    _id: user._id,
+                    
+                    
+                }
+            }
+        });
+
+        
+
+        
+
+            // res.status(200).json({
+            //     status: 'success',
+            //     token,
+            //     message: 'Login successful',
+            //     data: {
+            //         user: {
+            //             _id: user._id,
+            //             email: user.companyEmail,
+                        
+            //         }
+            //     }
+            // });
+        
+    
+
+    } catch (error) {
+        console.error('Login Error:', error);
+        res.status(500).json({ message: 'Server error during login' });
+    }
 };
 
