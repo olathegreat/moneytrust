@@ -121,9 +121,9 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         res.status(201).json({
             status: 'success',
             token,
-            message: 'Company registered successfully. Verify your email with the OTP sent.',
+            message: 'user registered successfully. Verify your email with the OTP sent.',
             data: {
-                company: {
+                user: {
                     _id: newUser._id,
                     firstName: newUser.firstName,
                     lastName: newUser.lastName,
@@ -313,3 +313,90 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+
+
+
+export const resendOtp = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body;
+
+    try {
+        // Check if the email belongs to a company or user
+        let user = await Company.findOne({ companyEmail: email });
+        let role: 'company' | 'user' | null = user ? 'company' : null;
+
+        if (!user) {
+            user = await User.findOne({ email });
+            role = user ? 'user' : null;
+        }
+
+        if (!user || !role) {
+            res.status(404).json({ message: 'Email not found' });
+            return;
+        }
+
+        
+        // Generate a new OTP
+        const otp = crypto.randomInt(1000, 9999).toString();
+        const otpExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes expiry
+
+        // Update user with new OTP and expiry
+        user.otp = otp;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        res.status(200).json({ status: 'success', message: 'New OTP sent  ' + otp });
+
+        // Send OTP email via Resend
+        await resend.emails.send({
+            from: `Your Company <${process.env.FROM_EMAIL}>`,
+            to: email,
+            subject: 'Resend OTP - Verify Your Email',
+            html: `<p>Your new OTP code is: <strong>${otp}</strong></p><p>This code expires in 30 minutes.</p>`
+        });
+
+        
+    } catch (error) {
+        console.error('Resend OTP Error:', error);
+        res.status(500).json({ message: 'Server error while resending OTP' });
+    }
+};
+
+
+export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
+    const { email, otp } = req.body;
+
+    try {
+        // Find the user or company by email
+        let user = await Company.findOne({ companyEmail: email });
+        if (!user) {
+            user = await User.findOne({ email });
+        }
+
+        if (!user) {
+            res.status(404).json({ message: 'User or company not found' });
+            return;
+        }
+
+       
+        if (user.otp !== otp) {
+            res.status(400).json({ message: 'Invalid OTP' });
+            return;
+        }
+
+        if (user.otpExpires && new Date(user.otpExpires) < new Date()) {
+            res.status(400).json({ message: 'OTP has expired. Request a new one.' });
+            return;
+        }
+
+        // Mark as verified and remove OTP fields
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+
+        res.status(200).json({ status: 'success', message: 'Email verified successfully' });
+    } catch (error) {
+        console.error('OTP Verification Error:', error);
+        res.status(500).json({ message: 'Server error during OTP verification' });
+    }
+};
