@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import SuccessImage from "../assets/success.png";
+import { apiClient } from "../lib/apiClient";
+import { toast } from "sonner";
+import Confetti from "react-confetti";
+import CustomLoaderCircle from "./LoaderCircle";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -8,45 +14,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "./ui/calendar";
-import { format } from "date-fns";
-import SuccessImage from "../assets/success.png";
-import { apiClient } from "../lib/apiClient";
-import { toast } from "sonner";
-import Confetti from "react-confetti";
-import CustomLoaderCircle from "./LoaderCircle";
-import { useNavigate } from "react-router-dom";
 
-const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void }) => {
+const countryCodes = [
+  { code: "+234", label: "🇳🇬 Nigeria" },
+  { code: "+1", label: "🇺🇸 USA" },
+  { code: "+44", label: "🇬🇧 UK" },
+  { code: "+91", label: "🇮🇳 India" },
+];
 
+const RegisterUser = ({
+  setDisplay,
+}: {
+  setDisplay: (value: string) => void;
+}) => {
   const [showConfetti, setShowConfetti] = useState(true);
-  const [companyName, setCompanyName] = useState("");
-  const [companyEmail, setCompanyEmail] = useState("");
-  const [typeOfBusiness, setTypeOfBusiness] = useState("");
-  const [formStep, setFormStep] = useState(1);
-  const [dateOfIncorporation, setDateOfIncorporation] = useState<
-    Date | undefined
-  >(undefined);
-
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [companyNameError, setCompanyNameError] = useState("");
-  const [companyEmailError, setCompanyEmailError] = useState("");
-  const [typeOfBusinessError, setTypeOfBusinessError] = useState("");
+  const [formStep, setFormStep] = useState(2);
 
-  const [dateOfIncorporationError, setDateOfIncorporationError] = useState("");
-
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [countryCode, setCountryCode] = useState("+234");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [otpError, setOtpError] = useState("");
   const [showOverallError, setShowOverallError] = useState(false);
+
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setPhoneNumber(value);
+      setPhoneNumberError("");
+    }
+  };
+
+  const validatePhoneNumber = () => {
+    if (!phoneNumber) {
+      setPhoneNumberError("Phone number is required.");
+    } else if (phoneNumber.length !== 10) {
+      setPhoneNumberError("Phone number must be 10 digits.");
+    }
+  };
   useEffect(() => {
     if (formStep === 4) {
       setShowConfetti(true);
@@ -57,164 +76,154 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
 
   const validateName = (name: string) => {
     const nameRegex = /^[A-Za-z\s]+$/;
-     return nameRegex.test(name)
-     
-    
+    return nameRegex.test(name);
   };
 
   const nextFunction = () => {
     if (
       formStep === 1 &&
-      companyName &&
-      typeOfBusiness &&
-      dateOfIncorporation && validateName(companyName)
+      firstName &&
+      lastName &&
+      email &&
+      validateName(firstName) &&
+      validateName(firstName)
     ) {
       setFormStep(2);
-      setShowOverallError(false)
-    } else if (
-      formStep === 2 &&
-      companyName &&
-      typeOfBusiness &&
-      dateOfIncorporation &&
-      password &&
-      companyEmail &&
-      confirmPassword
-    ) {
+      setShowOverallError(false);
+    } else if (formStep === 2 && password && confirmPassword && phoneNumber) {
       signUpCompany();
-      setShowOverallError(false)
-    } else if (
-      formStep === 3 &&
-      companyName &&
-      typeOfBusiness &&
-      dateOfIncorporation &&
-      password &&
-      companyEmail &&
-      confirmPassword &&
-      otp
-    ) {
+      setShowOverallError(false);
+    } else if (formStep === 3 && otp) {
       verifyOtp();
-      setShowOverallError(false)
+      setShowOverallError(false);
     }
 
-    if (formStep === 1 && !companyName) {
-      setCompanyNameError("Company name is required");
+    if (formStep === 1 && !firstName) {
+      setFirstNameError("first name is required");
       setShowOverallError(true);
     }
-    if(formStep === 1 && !validateName(companyName)) {
-      setCompanyNameError("Company name must not contain number");
+    if (formStep === 1 && !lastName) {
+      setLastNameError("last name is required");
       setShowOverallError(true);
-
     }
-
-    if (formStep === 1 && !typeOfBusiness) {
-      setTypeOfBusinessError("Type of business is required");
-      setShowOverallError(true)
-      
+    if (formStep === 1 && !validateName(firstName)) {
+      setFirstNameError("first name must not contain number");
+      setShowOverallError(true);
     }
-    if (formStep === 1 && !dateOfIncorporation) {
-      setDateOfIncorporationError("Date of incorporation is required");
-      setShowOverallError(true)
-      
+    if (formStep === 1 && !validateName(lastName)) {
+      setLastNameError("last name must not contain number");
+      setShowOverallError(true);
+    }
+    if (formStep === 1 && !email) {
+      setEmailError("Email is required");
+      setShowOverallError(true);
+    }
+    if (formStep === 2 && !phoneNumber) {
+      setPhoneNumberError("Phone number is required");
+      setShowOverallError(true);
     }
     if (formStep === 2 && !password) {
       setPasswordError("Password is required");
-      setShowOverallError(true)
+      setShowOverallError(true);
     }
     if (formStep === 2 && !confirmPassword) {
       setConfirmPasswordError("Confirm password is required");
-      setShowOverallError(true)
+      setShowOverallError(true);
     }
-    if (formStep === 2 && !companyEmail) {
-      setCompanyEmailError("Company email is required");
-      setShowOverallError(true)
+    if (formStep === 3 && !otp) {
+      setOtpError("Otp is required");
+      setShowOverallError(true);
     }
   };
-
-
 
   const signUpCompany = async () => {
     setShowLoader(true);
     if (confirmPassword !== password) {
       setPasswordError("Password must be same");
       setConfirmPasswordError("Password must be the same");
-      setShowOverallError(true)
+      setShowOverallError(true);
       setShowLoader(false);
       return;
     }
 
     if (password.length < 6) {
       setPasswordError("Password must be more than 6 characters");
-      setShowOverallError(true)
+      setShowOverallError(true);
       setShowLoader(false);
       return;
     }
     const validatePassword = (password: string) => {
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      
-      return passwordRegex.test(password)
-        
+      const passwordRegex =
+        /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+      return passwordRegex.test(password);
     };
 
     if (!validatePassword(password)) {
-      setShowOverallError(true)
+      setShowOverallError(true);
       setPasswordError(
         "Password must contain at least one uppercase letter, one number, and one special character"
       );
-      
+
       setShowLoader(false);
       return;
     }
-    
-    if (!companyEmail.includes("@")) {
-      setCompanyEmailError("Email must contain @");
-      setShowOverallError(true)
+
+    if (!email.includes("@")) {
+      setEmailError("Email must contain @");
+      setShowOverallError(true);
+      setShowLoader(false);
+      return;
+    }
+
+    if (phoneNumber.length !== 10) {
+      setPhoneNumberError("Phone number must be 10 digits");
+      setShowOverallError(true);
       setShowLoader(false);
       return;
     }
 
     try {
       setShowOverallError(false);
-      setPasswordError("")
+      setPasswordError("");
       setConfirmPasswordError("");
-      setCompanyEmailError("");
-      const response = await apiClient.post("/api/v1/auth/register-company", {
-        companyName,
-        typeOfBusiness,
-        dateOfIncorporation,
-        companyEmail,
+      setPhoneNumberError("");
+      const response = await apiClient.post("/api/v1/auth/register-user", {
+        firstName,
+        lastName,
+        email,
+        phoneNumber: countryCode + phoneNumber,
         password,
       });
       console.log(response);
       toast(
-        "otp sent to your mail, but for the purpose of testing, otp is " +
-          response.data.data.company.otp,
-          {
-            duration: Infinity, 
-    dismissible: true
-          }
+        `otp sent to ${email} and ${phoneNumber}, but for the purpose of testing, otp is ` +
+          response.data.data.user.otp,
+        {
+          duration: Infinity,
+          dismissible: true,
+        }
       );
       setFormStep(3);
-      
+
       setShowLoader(false);
     } catch (err: any) {
       console.log(err);
       setShowLoader(false);
-      console.log(err.response.data.message.includes("email"))
-      if(err.response.data.message.includes("email")) {
-      
-        setCompanyEmailError("Company email already exists");
-        setShowOverallError(true)
-        
+      console.log(err.response.data.message.includes("email"));
+      if (err.response.data.message.includes("email")) {
+        setEmailError("email already exists");
+        setShowOverallError(true);
       }
     }
   };
 
   const verifyOtp = async () => {
-    setShowLoader
+    setShowLoader;
     try {
-      const response = await apiClient.post("/api/v1/auth/verify-company-otp", {
+      const response = await apiClient.post("/api/v1/auth/verify-user-otp", {
         otp,
-        companyEmail,
+        email,
       });
       console.log(response);
       setFormStep(4);
@@ -230,36 +239,28 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
 
   return (
     <div className="flex w-full items-center flex-col gap-10">
-      {
-        showOverallError && 
+      {showOverallError && (
         <div className="fixed top-24 rounded  duration-500 transition-all ease-linear items-center flex w-[90%]  sm:w-[555px] bg-red-200 border-red-600 border-2 px-2 ">
           <div className="flex-grow flex flex-col justify-center  text-red-600 min-h-10  max-h-15">
-            {formStep === 1 && companyNameError  && (<div>{companyNameError}</div>)}
-            {formStep === 1 && typeOfBusinessError  && (<div>{typeOfBusinessError}</div>)}
-            {formStep === 1 && dateOfIncorporationError  && (<div>{dateOfIncorporationError}</div>)}
+            {formStep === 1 && firstNameError && <div>{firstNameError}</div>}
+            {formStep === 1 && lastNameError && <div>{lastNameError}</div>}
+            {formStep === 1 && emailError && <div>{emailError}</div>}
+            {formStep === 2 && phoneNumberError && (
+              <div>{phoneNumberError}</div>
+            )}
+            {formStep === 2 && passwordError && <div>{passwordError}</div>}
 
-            {formStep === 2 && companyEmailError  && (<div>{companyEmailError}</div>)}
-            {formStep === 1 && passwordError  && (<div>{passwordError}</div>)}
-            
-
-            
-          
-
-          
-
-            {
-              formStep === 3 && (
-                <>
-                  {otpError} 
-                
-                </>
-              )
-            }
+            {formStep === 3 && <>{otpError}</>}
           </div>
 
-          <div onClick={()=>setShowOverallError(false)} className="cursor-pointer text-red-500 ">X</div>
+          <div
+            onClick={() => setShowOverallError(false)}
+            className="cursor-pointer text-red-500 "
+          >
+            X
+          </div>
         </div>
-      }
+      )}
 
       <div className="w-full sm:w-[555px] flex flex-col items-start py-12 px-6 sm:p-12 bg-white">
         {formStep === 1 && (
@@ -276,10 +277,13 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
             </div>
 
             <div className="flex justify-start items-start gap-4">
-              <Button className="bg-white border-gray-300 border-[2px] rounded-none transition-all duration-300 hover:text-white/60 text-black/80 sm:w-[146px] h-[48px]">
+              <Button
+                onClick={() => setDisplay("user")}
+                className=" bg-black border-gray-300 border-[2px] rounded-none transition-all duration-300 hover:text-white/60 text-white sm:w-[146px] h-[48px]"
+              >
                 Individual
               </Button>
-              <Button onClick={()=>setDisplay("corporate")} className="bg-black/80 rounded-none transition-all duration-300 hover:text-white/70 text-white sm:w-[146px] h-[48px]">
+              <Button className="bg-white rounded-none transition-all duration-300 hover:text-white/70 text-black/80 sm:w-[146px] h-[48px]">
                 Corporate
               </Button>
             </div>
@@ -302,76 +306,47 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
 
           {formStep === 1 && (
             <div className="flex flex-col gap-6">
-              <div className="flex w-full flex-col">
-                <label className="mb-2">Company Name</label>
-                <Input
-                  type="text"
-                  value={companyName}
-                  className={`w-full rounded-none ${
-                    companyNameError && "border-red-500"
-                  }`}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Enter your company name"
-                />
-                <p className="text-[12px] text-red-600">{companyNameError}</p>
-              </div>
-
               <div className="flex gap-4 flex-col sm:flex-row">
-                {/* Type of Business */}
-                <div className="flex flex-col flex-1 gap-2">
-                  <label>Type of Business</label>
-                  <Select onValueChange={setTypeOfBusiness}>
-                    <SelectTrigger
-                      className={`w-full rounded-none text-gray-700 text-[16px] ${
-                        typeOfBusinessError && "border-red-500"
-                      }`}
-                    >
-                      <SelectValue  placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem   value="Sole Proprietorship">
-                        Sole Proprietorship
-                      </SelectItem>
-                      <SelectItem value="Corporation">Corporation</SelectItem>
-                      <SelectItem value="Partnership">Partnership</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-[12px] text-red-600">
-                    {typeOfBusinessError}
-                  </p>
+                <div className="flex w-full flex-1 flex-col">
+                  <label className="mb-2">Your First Name</label>
+                  <Input
+                    type="text"
+                    value={firstName}
+                    className={`w-full rounded-none ${
+                      firstNameError && "border-red-500"
+                    }`}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter your first name"
+                  />
+                  <p className="text-[12px] text-red-600">{firstNameError}</p>
                 </div>
 
-                {/* Date of Incorporation */}
-                <div className="flex flex-col flex-1 gap-2">
-                  <label>Date of Incorporation</label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant={"outline"}
-                        className={`w-full text-gray-700 text-[16px] rounded-none justify-start text-left font-normal ${
-                          typeOfBusinessError && "border-red-500"
-                        }`}
-                      >
-                        <CalendarIcon className="mr-2 h-5 w-5" />
-                        {dateOfIncorporation
-                          ? format(dateOfIncorporation, "PPP")
-                          : "Pick a date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={dateOfIncorporation}
-                        onSelect={setDateOfIncorporation}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <p className="text-[12px] text-red-600">
-                    {dateOfIncorporationError}
-                  </p>
+                <div className="flex w-full flex-1 flex-col">
+                  <label className="mb-2">Your last Name</label>
+                  <Input
+                    type="text"
+                    value={lastName}
+                    className={`w-full rounded-none ${
+                      lastNameError && "border-red-500"
+                    }`}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter your first name"
+                  />
+                  <p className="text-[12px] text-red-600">{lastNameError}</p>
                 </div>
+              </div>
+              <div className="flex w-full flex-col ">
+                <label className="mb-2">Your Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  className={`w-full rounded-none ${
+                    emailError && "border-red-600"
+                  }`}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your company email"
+                />
+                <p className="text-[12px] text-red-600">{emailError}</p>
               </div>
             </div>
           )}
@@ -379,20 +354,6 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
           {/* stage 2 form */}
           {formStep === 2 && (
             <div className="flex flex-col gap-6">
-              <div className="flex w-full flex-col ">
-                <label className="mb-2">Company Email</label>
-                <Input
-                  type="email"
-                  value={companyEmail}
-                  className={`w-full rounded-none ${
-                    companyEmailError && "border-red-600"
-                  }`}
-                  onChange={(e) => setCompanyEmail(e.target.value)}
-                  placeholder="Enter your company email"
-                />
-                <p className="text-[12px] text-red-600">{companyEmailError}</p>
-              </div>
-
               <div className="flex w-full flex-col ">
                 <label className="mb-2">Password</label>
                 <Input
@@ -423,7 +384,44 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
                 </p>
               </div>
 
+              <div className="flex w-full flex-col">
+                <label className="mb-2">Phone Number</label>
+                <div className="flex gap-4">
+                  <Select
+                    onValueChange={(value) => setCountryCode(value)}
+                    defaultValue={countryCode}
+                  >
+                    <SelectTrigger className="w-[100px]">
+                      <SelectValue placeholder="+234" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryCodes.map(({ code, label }) => (
+                        <SelectItem key={label} value={code}>
+                          {code}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
+                  <Input
+                    type="tel"
+                    value={phoneNumber}
+                    className={`flex-grow rounded-none border-l-0 ${
+                      phoneNumberError && "border-red-500"
+                    }`}
+                    onChange={handlePhoneChange}
+                    onBlur={validatePhoneNumber}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                {/* Error Message */}
+                {phoneNumberError && (
+                  <p className="text-[12px] text-red-600 mt-1">
+                    {phoneNumberError}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -432,7 +430,8 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
             <div className="flex flex-col gap-6">
               <div className="flex w-full flex-col ">
                 <label className="text-[14px] mb-2 sm:text-[16px]">
-                  Enter the 4 digit code that was sent to {companyEmail}
+                  Enter the 4 digit code that was sent to {email} and{" "}
+                  { countryCode + phoneNumber}
                 </label>
                 <Input
                   type="text"
@@ -466,11 +465,14 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
                   Registration Complete
                 </label>
                 <p className="text-center text-[12px]">
-                  Dear {companyName}. Your registration is now complete. You may
+                  Dear {firstName}. Your registration is now complete. You may
                   proceed to your dashboard and start trading commodities.
                 </p>
 
-                <div onClick={()=>navigate("/dashboard")} className="text-[#D71E0E] text-center uppercase mt-10 cursor-pointer">
+                <div
+                  onClick={() => navigate("/dashboard")}
+                  className="text-[#D71E0E] text-center uppercase mt-10 cursor-pointer"
+                >
                   Go to dashboard
                 </div>
               </div>
@@ -485,13 +487,11 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
               Next Step
             </div>
           )}
-          {
-            showLoader && (
-              <div className="flex items-center justify-center">
+          {showLoader && (
+            <div className="flex items-center justify-center">
               <CustomLoaderCircle color="#D71E0E" />
-              </div>
-            )
-          }
+            </div>
+          )}
         </div>
       </div>
 
@@ -510,10 +510,7 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
         <div
           className="flex items-center cursor-pointer"
           onClick={() => {
-           formStep < 3 && companyName &&
-              typeOfBusiness &&
-              dateOfIncorporation &&
-              setFormStep(2);
+            formStep < 3 && lastName && firstName && email && setFormStep(2);
           }}
         >
           <div
@@ -530,12 +527,13 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
         <div
           className="flex items-center cursor-pointer"
           onClick={() => {
-            formStep !==4 && companyName &&
-              typeOfBusiness &&
-              dateOfIncorporation &&
+            formStep !== 4 &&
+              lastName &&
+              firstName &&
+              email &&
               password &&
               confirmPassword &&
-              companyEmail &&
+              phoneNumber &&
               setFormStep(3);
           }}
         >
@@ -555,4 +553,4 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
   );
 };
 
-export default RegisterCorporate;
+export default RegisterUser;
