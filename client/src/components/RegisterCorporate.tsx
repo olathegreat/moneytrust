@@ -276,10 +276,10 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
             </div>
 
             <div className="flex justify-start items-start gap-4">
-              <Button className="bg-white border-gray-300 border-[2px] rounded-none transition-all duration-300 hover:text-white/60 text-black/80 sm:w-[146px] h-[48px]">
+              <Button  onClick={() => setDisplay("user")} className="bg-white border-gray-300 border-[2px] rounded-none transition-all duration-300 hover:text-white/60 text-black/80 sm:w-[146px] h-[48px]">
                 Individual
               </Button>
-              <Button onClick={()=>setDisplay("corporate")} className="bg-black/80 rounded-none transition-all duration-300 hover:text-white/70 text-white sm:w-[146px] h-[48px]">
+              <Button className="bg-black/80 rounded-none transition-all duration-300 hover:text-white/70 text-white sm:w-[146px] h-[48px]">
                 Corporate
               </Button>
             </div>

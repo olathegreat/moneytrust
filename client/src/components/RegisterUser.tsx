@@ -36,7 +36,7 @@ const RegisterUser = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [formStep, setFormStep] = useState(2);
+  const [formStep, setFormStep] = useState(1);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -86,12 +86,13 @@ const RegisterUser = ({
       lastName &&
       email &&
       validateName(firstName) &&
-      validateName(firstName)
+      validateName(lastName) &&
+      email.includes("@")
     ) {
       setFormStep(2);
       setShowOverallError(false);
     } else if (formStep === 2 && password && confirmPassword && phoneNumber) {
-      signUpCompany();
+      signUpUser();
       setShowOverallError(false);
     } else if (formStep === 3 && otp) {
       verifyOtp();
@@ -118,6 +119,11 @@ const RegisterUser = ({
       setEmailError("Email is required");
       setShowOverallError(true);
     }
+    if (formStep === 1 && !email.includes("@")) {
+      setEmailError("Email is invalid");
+      setShowOverallError(true);
+    }
+    
     if (formStep === 2 && !phoneNumber) {
       setPhoneNumberError("Phone number is required");
       setShowOverallError(true);
@@ -136,7 +142,7 @@ const RegisterUser = ({
     }
   };
 
-  const signUpCompany = async () => {
+  const signUpUser = async () => {
     setShowLoader(true);
     if (confirmPassword !== password) {
       setPasswordError("Password must be same");
@@ -212,7 +218,8 @@ const RegisterUser = ({
       setShowLoader(false);
       console.log(err.response.data.message.includes("email"));
       if (err.response.data.message.includes("email")) {
-        setEmailError("email already exists");
+        setEmailError("email already exists, go back and change");
+        toast("email already exists");
         setShowOverallError(true);
       }
     }
@@ -245,6 +252,7 @@ const RegisterUser = ({
             {formStep === 1 && firstNameError && <div>{firstNameError}</div>}
             {formStep === 1 && lastNameError && <div>{lastNameError}</div>}
             {formStep === 1 && emailError && <div>{emailError}</div>}
+            {formStep === 2 && emailError && <div>{emailError}</div>}
             {formStep === 2 && phoneNumberError && (
               <div>{phoneNumberError}</div>
             )}
@@ -278,12 +286,12 @@ const RegisterUser = ({
 
             <div className="flex justify-start items-start gap-4">
               <Button
-                onClick={() => setDisplay("user")}
+               
                 className=" bg-black border-gray-300 border-[2px] rounded-none transition-all duration-300 hover:text-white/60 text-white sm:w-[146px] h-[48px]"
               >
                 Individual
               </Button>
-              <Button className="bg-white rounded-none transition-all duration-300 hover:text-white/70 text-black/80 sm:w-[146px] h-[48px]">
+              <Button  onClick={() => setDisplay("corporate")} className="bg-white rounded-none transition-all duration-300 hover:text-white/70 text-black/80 sm:w-[146px] h-[48px]">
                 Corporate
               </Button>
             </div>

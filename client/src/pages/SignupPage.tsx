@@ -13,7 +13,7 @@ const SignupPage = () => {
   }
 
   return (
-    <div className="bg-gray-100 flex  flex-col items-center p-4 h-fit gap-10 sm:gap-20 pb-10">
+    <div className="bg-gray-100 flex  flex-col items-center p-4 min-h-[100vh] gap-10 sm:gap-20 pb-10">
       <Nav />
       {
         display === "corporate" && <RegisterCorporate setDisplay={setDisplayFunction} />
