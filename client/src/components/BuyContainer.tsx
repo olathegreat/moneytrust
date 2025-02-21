@@ -29,7 +29,9 @@ const BuyContainer = ({buyFunction, productArray}:any) => {
         
         {
             productArray.map((product:any)=>(
-                <div key={product.id} className=" p-2 flex text-gray-800 hover:bg-gray-100 cursor-pointer px-4 items-center border-b-[1px] border-gray-100">
+                <div key={product.id} className=" py-1 flex text-gray-800  cursor-pointer  items-center border-b-[1px] border-gray-100">
+                    <div className="flex w-full justify-between items-center hover:bg-gray-100 p-1 px-4 ">
+
             <div className="w-[180px] tracking-wide font-medium text-[14px]">
                {product.product + "(" + product.code + ")" }
             </div>
@@ -51,6 +53,7 @@ const BuyContainer = ({buyFunction, productArray}:any) => {
 
 
         </div> 
+        </div>
             ))
         }
 

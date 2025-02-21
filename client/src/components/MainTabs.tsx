@@ -2,16 +2,16 @@ import { Button } from "./ui/button"
 
 const MainTabs = ({mainTab, setMainTab}: any) => {
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="flex gap-4 items-center flex-wrap">
 
-        <Button
-           onClick={() => setMainTab("Board")}
-           className={`border-none focus:bg-[#d71e0e] shadow-none hover:opacity-85 duration-300 transition-all rounded-full ease-linear  ${mainTab === "Board" ? "bg-[#d71e0e] text-white" : "bg-gray-100/50 text-black/80"}`}	
+        <div
+           
+           className={`border-none  font-medium shadow-none hover:opacity-85 duration-300 transition-all rounded-full ease-linear  text-black/80`}	
 
         >
             Board
   
-        </Button>
+        </div>
 
         <Button
            onClick={() => setMainTab("X-Traded")}
