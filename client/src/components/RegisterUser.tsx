@@ -202,7 +202,7 @@ const RegisterUser = ({
         password,
       });
       console.log(response);
-     sessionStorage.set("token", response.data.token)
+     sessionStorage.setItem("token", response.data.data.token)
       toast(
         `otp sent to ${email} and ${phoneNumber}, but for the purpose of testing, otp is ` +
           response.data.data.user.otp,
