@@ -12,7 +12,7 @@ import BuyContainer from "../components/BuyContainer";
 import { infoArray, productArray } from "../helpers/Data";
 import SellContainer from "../components/SellContainer";
 import TradeLog from "../components/TradeLog";
-import CustomLoaderCircle from "../components/LoaderCircle";
+// import CustomLoaderCircle from "../components/LoaderCircle";
 import Nav from "../components/Nav";
 
 
@@ -47,9 +47,9 @@ const DashboardPage = () => {
   }, [navigate]);
 
   if (isAuthenticated === null) {
-    return <div className="flex flex-col animate-pulse h-[100vw] text-5xl w-[100vw] items-center justify-center">
+    return <div className="flex flex-col animate-pulse h-[100vh] text-5xl w-[100vw] items-center justify-center">
       <Nav/>
-      <CustomLoaderCircle color="#d71e0e"/>
+      {/* <CustomLoaderCircle color="#d71e0e"/> */}
     </div>; 
   }
 

@@ -189,7 +189,7 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
         "otp sent to your mail, but for the purpose of testing, otp is " +
           response.data.data.company.otp,
           {
-            duration: Infinity, 
+            duration: 10000, 
     dismissible: true
           }
       );
