@@ -247,7 +247,7 @@ const RegisterUser = ({
   return (
     <div className="flex w-full items-center flex-col gap-10">
       {showOverallError && (
-        <div className="fixed top-24 rounded  duration-500 transition-all ease-linear items-center flex w-[90%]  sm:w-[555px] bg-red-200 border-red-600 border-2 px-2 ">
+        <div className="absolute top-24 rounded  duration-500 transition-all ease-linear items-center flex w-[90%]  sm:w-[555px] bg-red-200 border-red-600 border-2 px-2 ">
           <div className="flex-grow flex flex-col justify-center  text-red-600 min-h-10  max-h-15">
             {formStep === 1 && firstNameError && <div>{firstNameError}</div>}
             {formStep === 1 && lastNameError && <div>{lastNameError}</div>}
@@ -311,6 +311,7 @@ const RegisterUser = ({
 
         <div className="flex flex-col w-full gap-4 mt-8">
           {/* stage 1 form */}
+         
 
           {formStep === 1 && (
             <div className="flex flex-col gap-6">
@@ -362,6 +363,15 @@ const RegisterUser = ({
           {/* stage 2 form */}
           {formStep === 2 && (
             <div className="flex flex-col gap-6">
+              <div>
+              <div className="text-2xl w-full sm:text-3xl text-center">
+              Register new account
+            </div>
+            <div className="mt-2 mb-8 text-[13px] sm:text-[16px] w-full text-center">
+              Sign up for an account and start trading today
+            </div>
+                </div>
+              
               <div className="flex w-full flex-col ">
                 <label className="mb-2">Password</label>
                 <Input
