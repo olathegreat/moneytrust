@@ -1,7 +1,7 @@
 import express from 'express' 
 import multer from 'multer';
 import { protect } from '../middleware/userMiddleware';
-import {  getAuthenticatedUserOrCompany, login, registerCompany, registerUser, resendOtp, verifyCompanyOtp, verifyOtp, verifyUserOtp, } from '../controller/authController';
+import {  getAuthenticatedUserOrCompany, login, logout, registerCompany, registerUser, resendOtp, verifyCompanyOtp, verifyOtp, verifyUserOtp, } from '../controller/authController';
 
 
 const router = express.Router();
@@ -20,4 +20,5 @@ router.post("/send-user-reset-otp", resendOtp);
 router.post("/verify-reset-otp", verifyOtp);
 router.post("/login", login);
 router.get("/get-user-or-company", protect, getAuthenticatedUserOrCompany)
+router.post("/logout", logout)
 export default router;

@@ -475,3 +475,21 @@ export const getAuthenticatedUserOrCompany = (req: AuthRequest, res: Response):a
       return res.status(500).json({ message: "Server error", error });
     }
   };
+
+
+  export const logout = (req: Request, res: Response): void => {
+    try {
+        res.cookie("jwt", "", {
+            expires: new Date(0),
+            httpOnly: true
+        });
+
+        res.status(200).json({
+            status: "success",
+            message: "Logged out successfully"
+        });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        res.status(500).json({ message: "Server error during logout" });
+    }
+};
