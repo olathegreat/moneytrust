@@ -61,6 +61,7 @@ const Login = () => {
         password,
       });
       console.log(response.data);
+      console.log(response.data.token)
       sessionStorage.setItem("token", response.data.token)
 
       toast("Login successful!", {
