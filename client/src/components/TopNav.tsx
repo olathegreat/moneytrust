@@ -1,7 +1,7 @@
 import Logo from "../assets/logo.png";
-import { Button } from "./ui/button";
+// import { Button } from "./ui/button";
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { TbBrightnessUp } from "react-icons/tb";
+// import { TbBrightnessUp } from "react-icons/tb";
 import { Switch } from "./ui/switch";
 
 const TopNav = () => {
