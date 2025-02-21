@@ -15,6 +15,7 @@ import TradeLog from "../components/TradeLog";
 import CustomLoaderCircle from "../components/LoaderCircle";
 import Nav from "../components/Nav";
 
+
 const DashboardPage = () => {
   const [activeNav, setActiveNav] = useState("market");
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,14 +67,14 @@ const DashboardPage = () => {
             setSearchTerm={setSearchTerm}
           />
         </div>
-        <div className="mt-2 flex flex-grow overflow-x-auto   lg:ml-0  sm:mr-6 border-green-500 border gap-2">
+        <div className="mt-2 flex flex-grow  overflow-x-auto bg-red-400 lg:ml-0  sm:mr-6   gap-2">
           <div className="flex flex-col w-full gap-10 sm:gap-2">
-            <div className="flex flex-col  lg:overflow-x-hidden custom-scrollbar gap-4 w-fit lg:w-full bg-white p-4">
+            <div className="flex flex-col   custom-scrollbar gap-4 w-fit xl:w-full  bg-white p-4">
               <MainTabs mainTab={mainTab} setMainTab={setMainTab} />
               <SubTabs subTab={subTab} setSubTab={setSubTab} />
             </div>
-            <div className="flex flex-col  lg:flex-row w-fit lg:w-full gap-6 sm:gap-2">
-              <div className="flex-1">
+            <div className="flex flex-col  xl:flex-row w-fit md:w-full   gap-6 sm:gap-2">
+              <div className="flex-1 animate-slide-in-left duration-1000">
                 <BuyContainer buyFunction={() => console.log("buy function")} productArray={productArray} />
               </div>
               <div className="flex-1">

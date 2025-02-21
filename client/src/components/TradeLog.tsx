@@ -23,7 +23,7 @@ const TradeLog = ({ infoArray}:any) => {
                 Order Type
             </div>
 
-            <div className="w-[90px] flex justify-center text-[13px]">
+            <div className="w-[90px] flex justify-center  text-[13px]">
                 Matched Price
             </div>
 
@@ -72,7 +72,7 @@ const TradeLog = ({ infoArray}:any) => {
                  {product.quantity}
                 </div>
     
-                <div className="w-[100px]  flex justify-center text-[13px]">
+                <div  className="w-[60px] md:w-[100px]  flex md:justify-center  text-nowrap overflow-x-hidden text-[13px] text-ellipsis">
                     {product.date}
                 </div>
     

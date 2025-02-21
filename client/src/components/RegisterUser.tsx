@@ -160,7 +160,7 @@ const RegisterUser = ({
     }
     const validatePassword = (password: string) => {
       const passwordRegex =
-        /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        /^(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]{8,}$/;
 
       return passwordRegex.test(password);
     };
@@ -206,7 +206,7 @@ const RegisterUser = ({
         `otp sent to ${email} and ${phoneNumber}, but for the purpose of testing, otp is ` +
           response.data.data.user.otp,
         {
-          duration: Infinity,
+          duration: 10000,
           dismissible: true,
         }
       );
@@ -234,7 +234,7 @@ const RegisterUser = ({
       });
       console.log(response);
       setFormStep(4);
-      toast("company registered successfully");
+      toast("user registered successfully");
       setShowLoader(false);
     } catch (err) {
       console.log(err);
@@ -246,7 +246,7 @@ const RegisterUser = ({
 
   return (
     <div className="flex w-full items-center flex-col gap-10">
-      {showOverallError && (
+      {showOverallError && formStep !== 4 && (
         <div className="absolute top-24 rounded  duration-500 transition-all ease-linear items-center flex w-[90%]  sm:w-[555px] bg-red-200 border-red-600 border-2 px-2 ">
           <div className="flex-grow flex flex-col justify-center  text-red-600 min-h-10  max-h-15">
             {formStep === 1 && firstNameError && <div>{firstNameError}</div>}
@@ -395,7 +395,7 @@ const RegisterUser = ({
                     confirmPasswordError && "border-red-600"
                   }`}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Enter your company email"
+                  placeholder="Enter your password"
                 />
                 <p className="text-[12px] text-red-600">
                   {confirmPasswordError}
@@ -448,7 +448,7 @@ const RegisterUser = ({
             <div className="flex flex-col gap-6">
               <div className="flex w-full flex-col ">
                 <label className="text-[14px] mb-2 sm:text-[16px]">
-                  Enter the 4 digit code that was sent to {email} and{" "}
+                  Enter the 4 digit  code  that was sent to {email} and{" "}
                   { countryCode + phoneNumber}
                 </label>
                 <Input
