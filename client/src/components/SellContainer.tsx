@@ -32,7 +32,7 @@ const SellContainer = ({buyFunction, productArray}:any) => {
                 <div key={product.id} className=" py-1 flex text-gray-800  cursor-pointer   border-b-[1px] border-gray-200">
 
                     <div className="flex w-full justify-between items-center hover:bg-gray-100 p-1 px-4 ">
-            <div className="w-[180px] tracking-wide font-medium text-[14px]">
+            <div className="w-[180px] text-nowrap tracking-wide font-medium text-[14px]">
                {product.product + "(" + product.code + ")" }
             </div>
 

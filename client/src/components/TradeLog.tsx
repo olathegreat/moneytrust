@@ -2,7 +2,7 @@
 
 const TradeLog = ({ infoArray}:any) => {
   return (
-    <div className="bg-white    h-[352px] flex flex-col  overflow-y-hidden ">
+    <div className="bg-white  w-fit lg:w-full  h-[352px] flex flex-col  overflow-y-hidden ">
 
 <div className=" px-4 py-5 border-b-gray-100 border-b flex h-[40px]  tracking-wide text-gray-500  text-[13px] items-center">
     TRADING LOGS

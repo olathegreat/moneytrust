@@ -17,7 +17,7 @@ const BuyContainer = ({buyFunction, productArray}:any) => {
                 Quantity
             </div>
 
-            <div className=" text-[13px]">
+            <div className=" text-[13px] text-nowrap">
                 Bid price
             </div>
 
@@ -28,7 +28,7 @@ const BuyContainer = ({buyFunction, productArray}:any) => {
 
         </div>
 
-        <div className="flex  flex-col overflow-y-scroll custom-scrollbar overflow-x-scroll sm:overflow-x-hidden flex-grow">
+        <div className="flex  flex-col overflow-y-scroll custom-scrollbar sm:overflow-x-hidden flex-grow">
 
         
         {

@@ -66,13 +66,13 @@ const DashboardPage = () => {
             setSearchTerm={setSearchTerm}
           />
         </div>
-        <div className="mt-2 flex flex-grow bg-red-500 mr-6 border-green-500 border gap-2">
-          <div className="flex flex-col w-full gap-2">
-            <div className="flex flex-col overflow-x-scroll lg:overflow-x-hidden custom-scrollbar gap-4 w-full bg-white p-4">
+        <div className="mt-2 flex flex-grow overflow-x-auto   lg:ml-0  sm:mr-6 border-green-500 border gap-2">
+          <div className="flex flex-col w-full gap-10 sm:gap-2">
+            <div className="flex flex-col  lg:overflow-x-hidden custom-scrollbar gap-4 w-fit lg:w-full bg-white p-4">
               <MainTabs mainTab={mainTab} setMainTab={setMainTab} />
               <SubTabs subTab={subTab} setSubTab={setSubTab} />
             </div>
-            <div className="flex flex-col bg-yellow-500 lg:flex-row w-full gap-2">
+            <div className="flex flex-col  lg:flex-row w-fit lg:w-full gap-6 sm:gap-2">
               <div className="flex-1">
                 <BuyContainer buyFunction={() => console.log("buy function")} productArray={productArray} />
               </div>
