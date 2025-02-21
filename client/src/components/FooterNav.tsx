@@ -4,7 +4,7 @@ import { liveMarketDataArray } from "../helpers/Data";
 
 const FooterNav = () => {
   return (
-    <div className="fixed shadow shadow-gray-100 flex gap-8 text-black/80 bottom-0 w-full bg-white">
+    <div className="fixed  drop-shadow-lg border-t-2 shadow-gray-900 flex gap-8 text-black/80 bottom-0 w-full bg-white">
       <Button className="text-white flex  items-center h-30 rounded-none bg-black/80 hover:bg-black/60 transition-all duration-300">Live Market</Button>
 
       <div className="flex h-fit gap-12 w-fit overflow-x-scroll custom-scrollbar  text-black/80">

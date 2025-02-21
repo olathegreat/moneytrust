@@ -10,6 +10,11 @@ import bcrypt from "bcryptjs"
 dotenv.config();
 
 
+interface AuthRequest extends Request {
+    user?: any;
+    company?: any;
+  }
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 
@@ -18,6 +23,30 @@ const signToken = (id: ObjectId) => {
         expiresIn: Number(process.env.JWT_EXPIRES) || 86400
     })
 }
+
+// const createSendToken = (user: UserType, statusCode: number, res: Response): void => {
+//     const token = signToken(user._id as ObjectId);
+//     const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
+//     const cookieOptions = {
+//         expires: new Date(Date.now() + cookieExpires),
+//         httpOnly: true
+
+//     };
+//     // user.password = undefined;
+
+//     res.cookie("jwt", token, cookieOptions);
+
+//     res.status(statusCode).json({
+//         status: "success",
+//         token,
+//         data: {
+//             user,
+//         }
+//     })
+
+
+// }
+
 
 export const registerCompany = async (req: Request, res: Response): Promise<void> => {
     const { companyName, typeOfBusiness, dateOfIncorporation, companyEmail, password } = req.body;
@@ -53,6 +82,17 @@ export const registerCompany = async (req: Request, res: Response): Promise<void
        
 
         const token = signToken(newCompany._id);
+
+        const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
+        const cookieOptions = {
+            expires: new Date(Date.now() + cookieExpires),
+            httpOnly: true
+    
+        };
+    
+    
+        res.cookie("jwt", token, cookieOptions);
+    
 
         res.status(201).json({
             status: 'success',
@@ -117,6 +157,16 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
        
 
         const token = signToken(newUser._id);
+
+        const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
+        const cookieOptions = {
+            expires: new Date(Date.now() + cookieExpires),
+            httpOnly: true
+    
+        };
+    
+    
+        res.cookie("jwt", token, cookieOptions);
 
         res.status(201).json({
             status: 'success',
@@ -271,6 +321,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         // Generate JWT token
         const token = signToken(user._id);
 
+        const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
+        const cookieOptions = {
+            expires: new Date(Date.now() + cookieExpires),
+            httpOnly: true
+    
+        };
+    
+    
+        res.cookie("jwt", token, cookieOptions);
+
         
 
         
@@ -400,3 +460,18 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ message: 'Server error during OTP verification' });
     }
 };
+
+
+export const getAuthenticatedUserOrCompany = (req: AuthRequest, res: Response):any => {
+    try {
+      if (req.user) {
+        return res.status(200).json({ data: req.user });
+      } else if (req.company) {
+        return res.status(200).json({ data: req.company });
+      } else {
+        return res.status(404).json({ message: "No authenticated user or company found" });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: "Server error", error });
+    }
+  };

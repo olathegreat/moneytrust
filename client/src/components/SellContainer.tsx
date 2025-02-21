@@ -2,7 +2,7 @@ import { Button } from "./ui/button"
 
 const SellContainer = ({buyFunction, productArray}:any) => {
   return (
-    <div className="bg-white    h-[352px] flex flex-col  overflow-y-hidden ">
+    <div className="bg-white flex-1   h-[352px] flex flex-col  overflow-y-hidden ">
 
 
         <div className=" px-4 border-b-gray-100 border-b flex h-[40px]  tracking-wide text-gray-500 items-center">

@@ -1,53 +1,42 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
-import User, { UserDocument } from '../model/userModel';
+import jwt from "jsonwebtoken";
+import  User  from "../model/userModel";
+import Company  from "../model/companyModel";
 
-
-interface DecodedToken {
-    id: string;
-    iat: number;
+interface AuthRequest extends Request {
+  user?: any;
+  company?: any;
 }
 
-interface AuthenticatedRequest extends Request {
-    user?: UserDocument
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction):Promise<void> => {
+  try {
+    const token = req.cookies?.jwt;
+    
+    if (!token) {
+    res.status(401).json({ message: "Unauthorized: No token provided" });
+    return    
 }
 
-export const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    
-    const token= req.cookies.jwt  || " ";
-    
-   
-    try{
-        
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
 
-        if(!token){
-            res.status(401).json({
-                message: 'You are not logged in'
-            })
-            return;
-        }
+    let authenticatedEntity = await User.findById(decoded.id).select("-password");
 
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as DecodedToken;
-    const freshUser = await User.findById(decoded.id).select('_id fullname');
-    if(!freshUser){
-        res.status(401).json({
-            message: 'User does not exist'
-        })
-        return;
+    if (authenticatedEntity) {
+      req.user = authenticatedEntity;
+    } else {
+      authenticatedEntity = await Company.findById(decoded.id).select("-password");
+      if (authenticatedEntity) {
+        req.company = authenticatedEntity;
+      }
     }
-    req.user = freshUser;
+
+    if (!req.user && !req.company) {
+      res.status(401).json({ message: "Unauthorized: Invalid token or user/company not found" });
+    }
+
     next();
-
-
-}catch(err){
-    res.status(401).json({
-        message: 'Invalid token, unauthorised',
-        token
-    })
-}
-
-
- 
-
-}
+  } catch (error) {
+     res.status(401).json({ message: "Unauthorized: Invalid token" });
+     return
+  }
+};

@@ -15,20 +15,20 @@
   /* For WebKit browsers (Chrome, Safari) */
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px; /* Thin scrollbar */
-    height:4px;
+    height:8px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Light gray background */
+    background: #a7a7a7; /* Light gray background */
     border-radius: 10px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #a09f9f; /* Darker gray scrollbar */
+    background: #8b8b8b; /* Darker gray scrollbar */
     border-radius: 10px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #797878; /* Darker when hovered */
+    background: #666666; /* Darker when hovered */
   }
   

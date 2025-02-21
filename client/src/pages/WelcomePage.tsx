@@ -26,7 +26,7 @@ const WelcomePage = () => {
           <div className="text-2xl text-nowrap sm:text-3xl ">Create an Account</div>
           <div className=" mt-2 mb-8">Join the family</div>
 
-          <Button onClick={()=>navigate("/sign-in")} className="bg-black/80 rounded-none transition-all duration-300 hover:bg-black/70 text-white w-full h-[48px]">
+          <Button onClick={()=>navigate("/sign-up")} className="bg-black/80 rounded-none transition-all duration-300 hover:bg-black/70 text-white w-full h-[48px]">
             Register
           </Button>
         </div>

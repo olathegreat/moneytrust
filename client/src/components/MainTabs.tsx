@@ -2,7 +2,7 @@ import { Button } from "./ui/button"
 
 const MainTabs = ({mainTab, setMainTab}: any) => {
   return (
-    <div className="flex gap-4 items-center flex-wrap">
+    <div className="flex gap-4 items-center ">
 
         <div
            
