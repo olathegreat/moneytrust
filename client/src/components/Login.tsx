@@ -61,6 +61,7 @@ const Login = () => {
         password,
       });
       console.log(response.data);
+      sessionStorage.setItem("token", response.data.token)
 
       toast("Login successful!", {
         duration: 3000,
