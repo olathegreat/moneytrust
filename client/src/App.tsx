@@ -6,7 +6,7 @@ import SigninPage from './pages/SigninPage'
 import WelcomePage from './pages/WelcomePage'
 import PasswordResetPage from './pages/PasswordResetPage'
 import ConfirmResetOTPPage from './pages/ConfirmResetOTPPage'
-import ProtectedRoute from './helpers/ProtectedRoute'
+
 
 
 function App() {

@@ -51,7 +51,7 @@ const BuyContainer = ({buyFunction, productArray}:any) => {
                 {product.price}
             </div>
 
-            <Button onClick={buyFunction} className="ml-5 bg-transparent active:bg-none active:text-green-400 hover:bg-transparent hover:text-green-400 transition-all duration-300 text-[14px] shadow-none border border-green-700 text-green-700">
+            <Button onClick={buyFunction} className="ml-5 bg-transparent active:bg-none active:text-green-400 hover:bg-transparent hover:text-green-400 transition-all duration-300 text-[14px]  shadow-none border border-green-700 text-green-700">
                 Buy 
             </Button>
 
