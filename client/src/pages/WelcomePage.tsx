@@ -8,7 +8,7 @@ const WelcomePage = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="relative bg-gray-100 flex flex-col items-center  p-4 h-fit gap-20 pb-10">
+    <div className="relative bg-gray-100 flex flex-col items-center  p-4 min-h-[100vh] gap-20 pb-10">
       <Nav />
 
       <div className="flex w-full items-center flex-col  gap-10">
