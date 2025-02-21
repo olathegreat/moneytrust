@@ -10,7 +10,12 @@ interface AuthRequest extends Request {
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction):Promise<void> => {
   try {
-    const token = req.cookies?.jwt;
+    let token = req.cookies?.jwt;
+
+   
+    if (!token && req.headers.authorization?.startsWith("Bearer")) {
+      token = req.headers.authorization.split(" ")[1]; // Extract token from "Bearer <token>"
+    }
     
     if (!token) {
     res.status(401).json({ message: "Unauthorized: No token provided" });

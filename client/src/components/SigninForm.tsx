@@ -42,6 +42,7 @@ const SignInForm = () => {
       toast("login successfull");
 
       console.log(res.data);
+      sessionStorage.set("token", res.data.token)
       setRequestSending(false);
       navigate("/profile")
     } catch (err) {

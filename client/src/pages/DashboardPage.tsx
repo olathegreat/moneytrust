@@ -28,9 +28,14 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const getUser = async () => {
+     
+      const token = sessionStorage.getItem("token")
       try {
         const response = await apiClient.get("/api/v1/auth/get-user-or-company/", {
           withCredentials: true,
+          headers:
+            token ? { Authorization: `Bearer ${token}` } : {}
+          
         });
         console.log(response);
         sessionStorage.setItem("sessionUserInfo", JSON.stringify(response?.data));

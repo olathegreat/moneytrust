@@ -185,6 +185,7 @@ const RegisterCorporate = ({ setDisplay }: { setDisplay: (value: string) => void
         password,
       });
       console.log(response);
+      sessionStorage.set("token", response.data.token)
       toast(
         "otp sent to your mail, but for the purpose of testing, otp is " +
           response.data.data.company.otp,

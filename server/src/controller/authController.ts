@@ -161,7 +161,8 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
         const cookieOptions = {
             expires: new Date(Date.now() + cookieExpires),
-            httpOnly: true
+            httpOnly: true,
+            secure:true
     
         };
     
@@ -324,7 +325,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const cookieExpires = Number(process.env.JWT_COOKIE_EXPIRES || 1) * 24 * 60 * 60 * 1000;
         const cookieOptions = {
             expires: new Date(Date.now() + cookieExpires),
-            httpOnly: true
+            httpOnly: true,
+            secure: true,
+            
     
         };
     
