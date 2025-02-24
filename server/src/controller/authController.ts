@@ -117,7 +117,7 @@ export const registerCompany = async (req: Request, res: Response): Promise<void
         });
     } catch (error) {
         console.error('Registration Error:', error);
-        res.status(500).json({ message: 'Server error during company registration' });
+        res.status(500).json({ message: 'Server error during company registration',error });
     }
 };
 
@@ -193,7 +193,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         });
     } catch (error) {
         console.error('Registration Error:', error);
-        res.status(500).json({ message: 'Server error during company registration' });
+        res.status(500).json({ message: 'Server error during company registration', error });
     }
 };
 
@@ -236,7 +236,7 @@ export const verifyCompanyOtp = async (req: Request, res: Response):Promise<void
 
   } catch (error) {
     console.error('OTP Verification Error:', error);
-    res.status(500).json({ message: 'Server error during OTP verification' });
+    res.status(500).json({ message: 'Server error during OTP verification',error });
   }
 };
 
@@ -279,7 +279,7 @@ export const verifyUserOtp = async (req: Request, res: Response):Promise<void> =
   
     } catch (error) {
       console.error('OTP Verification Error:', error);
-      res.status(500).json({ message: 'Server error during OTP verification' });
+      res.status(500).json({ message: 'Server error during OTP verification',error });
     }
   };
   
@@ -372,7 +372,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     } catch (error) {
         console.error('Login Error:', error);
-        res.status(500).json({ message: 'Server error during login' });
+        res.status(500).json({ message: 'Server error during login' ,error});
     }
 };
 
@@ -460,7 +460,7 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({ status: 'success', message: 'Email verified successfully' });
     } catch (error) {
         console.error('OTP Verification Error:', error);
-        res.status(500).json({ message: 'Server error during OTP verification' });
+        res.status(500).json({ message: 'Server error during OTP verification',error });
     }
 };
 
@@ -493,6 +493,6 @@ export const getAuthenticatedUserOrCompany = (req: AuthRequest, res: Response):a
         });
     } catch (error) {
         console.error("Logout Error:", error);
-        res.status(500).json({ message: "Server error during logout" });
+        res.status(500).json({ message: "Server error during logout",error });
     }
 };
